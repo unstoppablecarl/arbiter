@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\App\Providers;
+namespace UnstoppableCarl\Arbiter;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
