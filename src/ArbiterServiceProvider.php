@@ -5,7 +5,6 @@ namespace UnstoppableCarl\Arbiter;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
 use UnstoppableCarl\Arbiter\Policies\UserPolicy;
-use UnstoppableCarl\Arbiter\UserAuthority;
 use Illuminate\Config\Repository;
 
 class ArbiterServiceProvider extends ServiceProvider
