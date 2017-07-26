@@ -258,15 +258,18 @@ class UserAuthorityTest extends TestCase
 
         $expected = true;
         $actual   = $gate->allows('view', $user);
-        $this->assertEquals($expected, $actual);
+        $msg      = 'can correctly check view of User when override set to always view self';
+        $this->assertEquals($expected, $actual, $msg);
 
         $expected = true;
         $actual   = $gate->allows('update', $user);
-        $this->assertEquals($expected, $actual);
+        $msg      = 'can correctly check update of User when override set to always update self';
+        $this->assertEquals($expected, $actual, $msg);
 
         $expected = false;
         $actual   = $gate->allows('delete', $user);
-        $this->assertEquals($expected, $actual);
+        $msg      = 'can correctly check delete of User when override set to always delete self';
+        $this->assertEquals($expected, $actual, $msg);
 
         $expected = false;
         $actual   = $gate->allows('changePrimaryRole', $user);
