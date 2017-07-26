@@ -2,21 +2,20 @@
 
 namespace UnstoppableCarl\Arbiter;
 
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Arr;
+use Illuminate\Support\ServiceProvider;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
 use UnstoppableCarl\Arbiter\Policies\UserPolicy;
-use Illuminate\Config\Repository;
 
 class ArbiterServiceProvider extends ServiceProvider
 {
-
     /**
      * @var string
      */
     protected $configFilePath = __DIR__ . '/config/arbiter.php';
 
     /**
-     * @var Repository
+     * @var array
      */
     protected $config;
 
@@ -39,14 +38,14 @@ class ArbiterServiceProvider extends ServiceProvider
         $this->config = $this->registerConfig($this->configFilePath);
 
         $this->bind(UserAuthorityContract::class, function () {
-            $data = $this->config->get('primary_role_abilities', []);
+            $data = Arr::get($this->config, 'primary_role_abilities', []);
             return new UserAuthority($data);
         });
 
         $this->bind($this->userPolicyClass, function () {
             $userPolicy       = $this->userPolicyClass;
             $userAuthority    = $this->app->make(UserAuthorityContract::class);
-            $overrideWhenSelf = $this->config->get('override_when_self', null);
+            $overrideWhenSelf = Arr::get($this->config, 'override_when_self', null);
             return new $userPolicy($userAuthority, $overrideWhenSelf);
         });
     }
@@ -55,14 +54,11 @@ class ArbiterServiceProvider extends ServiceProvider
     {
         $fileName = basename($filePath);
         $key      = basename($fileName, '.php');
-
         $this->publishes([
-            $filePath => config_path($fileName),
+            $filePath => $this->app->make('path.config') . '/' . $fileName,
         ]);
 
         $this->mergeConfigFrom($filePath, $key);
-        $config = $this->app['config']->get($key);
-
-        return new Repository($config);
+        return $this->app['config']->get($key);
     }
 }
