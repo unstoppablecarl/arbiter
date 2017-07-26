@@ -52,10 +52,12 @@ class ArbiterServiceProvider extends ServiceProvider
 
     protected function registerConfig($filePath = null)
     {
-        $fileName = basename($filePath);
-        $key      = basename($fileName, '.php');
+        $fileName   = basename($filePath);
+        $key        = basename($fileName, '.php');
+        $configPath = $this->app->make('path.config');
+
         $this->publishes([
-            $filePath => $this->app->make('path.config') . '/' . $fileName,
+            $filePath => $configPath . '/' . $fileName,
         ]);
 
         $this->mergeConfigFrom($filePath, $key);

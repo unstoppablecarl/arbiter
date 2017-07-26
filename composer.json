@@ -1,6 +1,6 @@
 {
     "name": "unstoppablecarl/arbiter",
-    "version": "0.0.1",
+    "version": "0.1.2",
     "description": "Manage Laravel User abilities that target Users",
     "type": "library",
     "keywords": [
