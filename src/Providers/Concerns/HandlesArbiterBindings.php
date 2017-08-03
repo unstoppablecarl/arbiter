@@ -12,24 +12,34 @@ trait HandlesArbiterBindings
     protected function registerUserAuthority($shared = false)
     {
         $this->app->bind(UserAuthorityContract::class, function () {
-            return new UserAuthority(
+            return $this->buildUserAuthority(
                 $this->userAuthorityPrimaryRoleAbilities()
             );
         }, $shared);
     }
 
-    protected function registerTargetSelfOverrides($shared = false)
+    protected function buildUserAuthority($primaryRoleAbilities)
     {
-        $this->app->bind(TargetSelfOverridesContract::class, function () {
-            return new TargetSelfOverrides(
-                $this->targetSelfOverrides()
-            );
-        }, $shared);
+        return new UserAuthority($primaryRoleAbilities);
     }
 
     protected function userAuthorityPrimaryRoleAbilities()
     {
         return [];
+    }
+
+    protected function registerTargetSelfOverrides($shared = false)
+    {
+        $this->app->bind(TargetSelfOverridesContract::class, function () {
+            return $this->buildTargetSelfOverrides(
+                $this->targetSelfOverrides()
+            );
+        }, $shared);
+    }
+
+    protected function buildTargetSelfOverrides(array $overrides)
+    {
+        return new TargetSelfOverrides($overrides);
     }
 
     protected function targetSelfOverrides()
