@@ -26,14 +26,17 @@ class TargetSelfOverridesTest extends TestCase
      */
     public function testDifferentUsers($value)
     {
-        $policy = new TargetSelfOverrides([
+        $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
         $user1  = $this->freshUser(1, 'admin');
         $user2  = $this->freshUser(2, 'admin');
 
-        $actual = $policy->before($user1, 'ability', $user2);
+        $actual = $overrides->before($user1, 'ability', $user2);
         $msg    = 'correctly identifies different users and ignores overrides';
+        $this->assertNull($actual, $msg);
+
+        $actual = $overrides->callBefore([$user1, 'ability', $user2]);
         $this->assertNull($actual, $msg);
     }
 
@@ -43,24 +46,30 @@ class TargetSelfOverridesTest extends TestCase
      */
     public function testSameUser($value)
     {
-        $policy = new TargetSelfOverrides([
+        $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
         $user   = $this->freshUser(1, 'admin');
         $msg    = 'correctly identifies different users and ignores overrides';
 
         $expected = $value;
-        $actual   = $policy->before($user, 'ability', $user);
+        $actual   = $overrides->before($user, 'ability', $user);
+        $this->assertSame($expected, $actual, $msg);
+
+        $actual = $overrides->callBefore([$user, 'ability', $user]);
         $this->assertSame($expected, $actual, $msg);
     }
 
     public function testSameUserWhenEmpty()
     {
-        $policy = new TargetSelfOverrides([]);
+        $overrides = new TargetSelfOverrides([]);
         $user   = $this->freshUser(1, 'admin');
 
-        $actual = $policy->before($user, 'ability', $user);
+        $actual = $overrides->before($user, 'ability', $user);
         $msg    = 'returns null when same user but no overrides set';
+        $this->assertNull($actual, $msg);
+
+        $actual = $overrides->callBefore([$user, 'ability', $user]);
         $this->assertNull($actual, $msg);
     }
 
@@ -68,16 +77,19 @@ class TargetSelfOverridesTest extends TestCase
      * @dataProvider abilityValueProvider()
      * @param $value
      */
-    public function testNonUser($value)
+    public function testNonUserTarget($value)
     {
-        $policy = new TargetSelfOverrides([
+        $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
         $user1  = $this->freshUser(1, 'admin');
         $user2  = new \stdClass();
 
         $msg    = 'returns null for non-user target';
-        $actual = $policy->before($user1, 'ability', $user2);
+        $actual = $overrides->before($user1, 'ability', $user2);
+        $this->assertNull($actual, $msg);
+
+        $actual = $overrides->callBefore([$user1, 'ability', $user2]);
         $this->assertNull($actual, $msg);
     }
 }

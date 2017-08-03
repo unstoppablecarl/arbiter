@@ -4,22 +4,11 @@ namespace UnstoppableCarl\Arbiter\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use UnstoppableCarl\Arbiter\Providers\Concerns\HandlesArbiterBindings;
-use UnstoppableCarl\Arbiter\TargetSelfOverrides;
-use UnstoppableCarl\Arbiter\UserAuthority;
 
 class ArbiterServiceProvider extends ServiceProvider
 {
     use HandlesArbiterBindings;
 
-    /**
-     * @var string
-     */
-    protected $targetSelfOverridesClass = TargetSelfOverrides::class;
-
-    /**
-     * @var string
-     */
-    protected $userAuthorityClass = UserAuthority::class;
     /**
      * @var string
      */
@@ -37,31 +26,20 @@ class ArbiterServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $configKey = basename($this->configFile, '.php');
-        $this->mergeConfigFrom($this->configFile, $configKey);
-
-        $this->registerUserAuthority(
-            $this->userAuthorityClass()
-        );
-
-        $this->registerTargetSelfOverrides(
-            $this->targetSelfOverridesClass()
-        );
+        $this->registerConfig();
+        $this->registerUserAuthority();
+        $this->registerTargetSelfOverrides();
     }
 
-    protected function userAuthorityClass()
+    protected function registerConfig()
     {
-        return $this->config('user_authority.implementation_class', $this->userAuthorityClass);
+        $configKey = basename($this->configFile, '.php');
+        $this->mergeConfigFrom($this->configFile, $configKey);
     }
 
     protected function userAuthorityPrimaryRoleAbilities()
     {
         return $this->config('user_authority.primary_role_abilities', []);
-    }
-
-    protected function targetSelfOverridesClass()
-    {
-        return $this->config('target_self_overrides.implementation_class', $this->targetSelfOverridesClass);
     }
 
     protected function targetSelfOverrides()

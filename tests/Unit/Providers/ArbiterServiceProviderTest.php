@@ -1,10 +1,8 @@
 <?php
 
-namespace UnstoppableCarl\Arbiter\Tests\Unit;
+namespace UnstoppableCarl\Arbiter\Tests\Unit\Providers;
 
 use Illuminate\Config\Repository;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Foundation\Application;
 use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
@@ -25,6 +23,10 @@ class ArbiterServiceProviderTest extends TestCase
         return $app;
     }
 
+    /**
+     * @covers ArbiterServiceProvider::register()
+     * @covers ArbiterServiceProvider::boot()
+     */
     public function testConfig()
     {
         $app       = $this->freshApp();
@@ -51,10 +53,14 @@ class ArbiterServiceProviderTest extends TestCase
         $this->assertInstanceOf($expected, $actual);
     }
 //
-//    public function testUserAuthority()
+//    public function testUserPolicy()
 //    {
 //        $config = [
 //            'arbiter' => [
+//                'override_when_self'     => [
+//                    'view'   => true,
+//                    'delete' => false,
+//                ],
 //                'primary_role_abilities' => [
 //                    'primary_role_1' => [
 //                        'permissions' => [
@@ -74,62 +80,14 @@ class ArbiterServiceProviderTest extends TestCase
 //        ];
 //
 //        $app = $this->freshApp($config);
-//
 //        /** @var UserAuthorityContract $userAuthority */
 //        $userAuthority = $app->make(UserAuthorityContract::class);
+//        /** @var UserPolicy $policy */
+//        $policy = $app->make(UserPolicy::class);
 //
-//        $expected = ['primary_role_1', 'primary_role_2'];
-//        $actual   = $userAuthority->getPrimaryRoles();
-//        $msg      = 'sets UserAuthority primary roles via config';
+//        $msg      = 'injects UserAuthorityContract';
+//        $expected = $userAuthority->getPrimaryRoles();
+//        $actual   = $policy->getPrimaryRoles();
 //        $this->assertEquals($expected, $actual, $msg);
-//
-//        foreach ($config['arbiter']['primary_role_abilities'] as $primaryRole => $row) {
-//            $permissions = $row['permissions'];
-//            foreach ($permissions as $ability => $targets) {
-//                $actual   = $userAuthority->get($primaryRole, $ability);
-//                $expected = $targets;
-//                $msg      = 'sets UserAuthority data via config';
-//                $this->assertEquals($expected, $actual, $msg);
-//            }
-//        }
 //    }
-//
-
-    public function testUserPolicy()
-    {
-        $config = [
-            'arbiter' => [
-                'override_when_self'     => [
-                    'view'   => true,
-                    'delete' => false,
-                ],
-                'primary_role_abilities' => [
-                    'primary_role_1' => [
-                        'permissions' => [
-                            'ability_true'  => ['result_1'],
-                            'ability_false' => ['result_2'],
-                        ],
-                    ],
-                    'primary_role_2' => [
-                        'permissions' => [
-                            'ability2_true'  => ['result_3'],
-                            'ability2_false' => ['result_4'],
-                        ],
-                    ],
-
-                ],
-            ],
-        ];
-
-        $app = $this->freshApp($config);
-        /** @var UserAuthorityContract $userAuthority */
-        $userAuthority = $app->make(UserAuthorityContract::class);
-        /** @var UserPolicy $policy */
-        $policy = $app->make(UserPolicy::class);
-
-        $msg      = 'injects UserAuthorityContract';
-        $expected = $userAuthority->getPrimaryRoles();
-        $actual   = $policy->getPrimaryRoles();
-        $this->assertEquals($expected, $actual, $msg);
-    }
 }

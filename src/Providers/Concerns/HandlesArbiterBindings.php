@@ -9,40 +9,30 @@ use UnstoppableCarl\Arbiter\UserAuthority;
 
 trait HandlesArbiterBindings
 {
-    protected function registerUserAuthoritySingleton($concreteClass = UserAuthority::class)
+    protected function registerUserAuthority($shared = false)
     {
-        $this->registerUserAuthority($concreteClass, true);
-    }
-
-    protected function registerUserAuthority($concreteClass = UserAuthority::class, $shared = false)
-    {
-        $this->app->bind(UserAuthorityContract::class, function () use ($concreteClass) {
-            return new $concreteClass(
-                $this->userAuthorityAbilities()
-            );
-        }, $shared);
-    }
-
-    protected function registerTargetSelfOverridesSingleton($concreteClass = TargetSelfOverrides::class)
-    {
-        $this->registerUserAuthority($concreteClass, true);
-    }
-
-    protected function registerTargetSelfOverrides($concreteClass = TargetSelfOverrides::class, $shared = false)
-    {
-        $this->app->bind(TargetSelfOverridesContract::class, function () use ($concreteClass) {
-            return new $concreteClass(
+        $this->app->bind(UserAuthorityContract::class, function () {
+            return new UserAuthority(
                 $this->userAuthorityPrimaryRoleAbilities()
             );
         }, $shared);
     }
 
-    protected function userAuthorityAbilities()
+    protected function registerTargetSelfOverrides($shared = false)
+    {
+        $this->app->bind(TargetSelfOverridesContract::class, function () {
+            return new TargetSelfOverrides(
+                $this->targetSelfOverrides()
+            );
+        }, $shared);
+    }
+
+    protected function userAuthorityPrimaryRoleAbilities()
     {
         return [];
     }
 
-    protected function userAuthorityPrimaryRoleAbilities()
+    protected function targetSelfOverrides()
     {
         return [];
     }
