@@ -37,7 +37,7 @@ class TargetSelfOverrides implements TargetSelfOverridesContract
      */
     public function callBefore(array $arguments)
     {
-        return call_user_func([$this, 'before'], $arguments);
+        return call_user_func_array([$this, 'before'], $arguments);
     }
 
     /**
