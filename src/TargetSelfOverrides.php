@@ -1,10 +1,11 @@
 <?php
 
-namespace UnstoppableCarl\Arbiter\Policies\Concerns;
+namespace UnstoppableCarl\Arbiter;
 
 use Illuminate\Contracts\Auth\Authenticatable as AuthUser;
+use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 
-trait OverrideWhenSelf
+class TargetSelfOverrides implements TargetSelfOverridesContract
 {
     /**
      * Overrides the returned value of an ability when $target is the currently logged in user.
@@ -12,18 +13,31 @@ trait OverrideWhenSelf
      * Ignored when value is null.
      *
      * @var array
-     * @example [ 'my_ability' => true, 'my_other_ability' => false]
+     * @example [ 'my_ability' => true, 'my_other_ability' => false, 'fallback_ability' => null]
      * @return array
      *
      * @codeCoverageIgnore
      */
-    protected function overrideWhenSelf()
-    {
-        if (property_exists($this, 'overrideWhenSelf')) {
-            return $this->overrideWhenSelf;
-        }
+    protected $overrides = [];
 
-        return [];
+    /**
+     * TargetSelfAbilityOverrides constructor.
+     * @param array $overrides
+     */
+    public function __construct(array $overrides)
+    {
+        $this->overrides = $overrides;
+    }
+
+    /**
+     * Call $this->before using array of arguments
+     * Simplifies calling with func_get_args()
+     * @param array $arguments
+     * @return bool|null
+     */
+    public function callBefore(array $arguments)
+    {
+        return call_user_func([$this, 'before'], $arguments);
     }
 
     /**
@@ -31,38 +45,22 @@ trait OverrideWhenSelf
      * @see Gate::callPolicyBefore
      * @param AuthUser $user
      * @param string $ability
-     * @param User|string $target
+     * @param AuthUser|string $target
      * @return bool|null
      */
     public function before(AuthUser $user, $ability, $target)
     {
-        if (!$this->isOverridableAbility($ability)) {
-            return null;
-        }
-
         if (!$this->isSelf($user, $target)) {
             return null;
         }
 
-        $overrides = $this->overrideWhenSelf();
+        $overrides = $this->overrides;
 
         if (array_key_exists($ability, $overrides)) {
             return $overrides[$ability];
         }
 
         return null;
-    }
-
-    /**
-     * Determin if an ability can be overriden.
-     * If you want to allow all abilities,
-     * replace this method with one that always returns true
-     * @param string $ability
-     * @return bool
-     */
-    protected function isOverridableAbility($ability)
-    {
-        return method_exists($this, $ability);
     }
 
     /**
