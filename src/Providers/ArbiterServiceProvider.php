@@ -4,6 +4,8 @@ namespace UnstoppableCarl\Arbiter\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use UnstoppableCarl\Arbiter\Providers\Concerns\HandlesArbiterBindings;
+use UnstoppableCarl\Arbiter\TargetSelfOverrides;
+use UnstoppableCarl\Arbiter\UserAuthority;
 
 class ArbiterServiceProvider extends ServiceProvider
 {

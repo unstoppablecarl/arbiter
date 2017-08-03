@@ -32,7 +32,7 @@ trait HandlesArbiterBindings
     {
         $this->app->bind(TargetSelfOverridesContract::class, function () use ($concreteClass) {
             return new $concreteClass(
-                $this->targetSelfOverrides()
+                $this->userAuthorityPrimaryRoleAbilities()
             );
         }, $shared);
     }
@@ -42,7 +42,7 @@ trait HandlesArbiterBindings
         return [];
     }
 
-    protected function targetSelfOverrides()
+    protected function userAuthorityPrimaryRoleAbilities()
     {
         return [];
     }
