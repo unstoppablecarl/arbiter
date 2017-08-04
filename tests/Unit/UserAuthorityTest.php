@@ -2,7 +2,6 @@
 
 namespace UnstoppableCarl\Arbiter\Tests\Unit;
 
-use UnstoppableCarl\Arbiter\Tests\App\Models\User;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 use UnstoppableCarl\Arbiter\UserAuthority;
 
