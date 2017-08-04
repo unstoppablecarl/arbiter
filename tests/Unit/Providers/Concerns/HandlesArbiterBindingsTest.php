@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Fluent;
 use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
+use UnstoppableCarl\Arbiter\Providers\Concerns\HandlesArbiterBindings;
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
 use UnstoppableCarl\Arbiter\Tests\App\Providers\TestableArbiterServiceProvider as TestServiceProvider;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
@@ -48,8 +49,8 @@ class HandlesArbiterBindingsTest extends TestCase
     public function defaultBindings()
     {
         return [
-            [UserAuthorityContract::class, UserAuthority::class, 'public_registerUserAuthority'],
-            [TargetSelfOverridesContract::class, TargetSelfOverrides::class, 'public_registerTargetSelfOverrides'],
+            [UserAuthorityContract::class, UserAuthority::class, 'publicRegisterUserAuthority'],
+            [TargetSelfOverridesContract::class, TargetSelfOverrides::class, 'publicRegisterTargetSelfOverrides'],
         ];
     }
 
@@ -94,8 +95,8 @@ class HandlesArbiterBindingsTest extends TestCase
 
         /** @var TestServiceProvider $provider */
         $provider = $app->getProvider(TestServiceProvider::class);
-        $provider->public_registerUserAuthority(false, Fluent::class);
-        $provider->set_userAuthorityPrimaryRoleAbilities($settings);
+        $provider->publicRegisterUserAuthority(false, Fluent::class);
+        $provider->setUserAuthorityPrimaryRoleAbilities($settings);
 
         $userAuthority = $app->make(UserAuthorityContract::class);
 
@@ -114,8 +115,8 @@ class HandlesArbiterBindingsTest extends TestCase
 
         /** @var TestServiceProvider $provider */
         $provider = $app->getProvider(TestServiceProvider::class);
-        $provider->public_registerTargetSelfOverrides(false, Fluent::class);
-        $provider->set_targetSelfOverrides($settings);
+        $provider->publicRegisterTargetSelfOverrides(false, Fluent::class);
+        $provider->setTargetSelfOverrides($settings);
 
         $userAuthority = $app->make(TargetSelfOverridesContract::class);
 

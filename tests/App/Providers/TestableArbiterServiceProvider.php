@@ -21,12 +21,12 @@ class TestableArbiterServiceProvider extends ServiceProvider
         return $this->userAuthorityPrimaryRoleAbilities ?: $this->trait_userAuthorityPrimaryRoleAbilities();
     }
 
-    public function set_userAuthorityPrimaryRoleAbilities($userAuthorityPrimaryRoleAbilities)
+    public function setUserAuthorityPrimaryRoleAbilities($userAuthorityPrimaryRoleAbilities)
     {
         $this->userAuthorityPrimaryRoleAbilities = $userAuthorityPrimaryRoleAbilities;
     }
 
-    public function public_registerUserAuthority($shared = false, $concreteClass = UserAuthority::class)
+    public function publicRegisterUserAuthority($shared = false, $concreteClass = UserAuthority::class)
     {
         $this->registerUserAuthority($shared, $concreteClass);
     }
@@ -38,12 +38,12 @@ class TestableArbiterServiceProvider extends ServiceProvider
         return $this->targetSelfOverrides ?: $this->trait_targetSelfOverrides();
     }
 
-    public function set_targetSelfOverrides($targetSelfOverrides)
+    public function setTargetSelfOverrides($targetSelfOverrides)
     {
         $this->targetSelfOverrides = $targetSelfOverrides;
     }
 
-    public function public_registerTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class)
+    public function publicRegisterTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class)
     {
         $this->registerTargetSelfOverrides($shared, $concreteClass);
     }

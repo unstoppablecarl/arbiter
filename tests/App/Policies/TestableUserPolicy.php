@@ -6,11 +6,13 @@ use UnstoppableCarl\Arbiter\Policies\UserPolicy;
 
 class TestableUserPolicy extends UserPolicy
 {
-    public function getUserAuthority(){
+    public function getUserAuthority()
+    {
         return $this->userAuthority();
     }
 
-    public function getTargetSelfOverrides(){
+    public function getTargetSelfOverrides()
+    {
         return $this->targetSelfOverrides;
     }
 }
