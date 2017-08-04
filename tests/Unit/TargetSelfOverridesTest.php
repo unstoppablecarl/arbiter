@@ -29,8 +29,8 @@ class TargetSelfOverridesTest extends TestCase
         $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
-        $user1  = $this->freshUser(1, 'admin');
-        $user2  = $this->freshUser(2, 'admin');
+        $user1  = $this->mockUser(1, 'role_1');
+        $user2  = $this->mockUser(2, 'role_2');
 
         $actual = $overrides->before($user1, 'ability', $user2);
         $msg    = 'correctly identifies different users and ignores overrides';
@@ -49,7 +49,7 @@ class TargetSelfOverridesTest extends TestCase
         $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
-        $user   = $this->freshUser(1, 'admin');
+        $user   = $this->mockUser(1, 'role_1');
         $msg    = 'correctly identifies different users and ignores overrides';
 
         $expected = $value;
@@ -63,7 +63,7 @@ class TargetSelfOverridesTest extends TestCase
     public function testSameUserWhenEmpty()
     {
         $overrides = new TargetSelfOverrides([]);
-        $user   = $this->freshUser(1, 'admin');
+        $user   = $this->mockUser(1, 'role_1');
 
         $actual = $overrides->before($user, 'ability', $user);
         $msg    = 'returns null when same user but no overrides set';
@@ -82,7 +82,7 @@ class TargetSelfOverridesTest extends TestCase
         $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
-        $user1  = $this->freshUser(1, 'admin');
+        $user1  = $this->mockUser(1, 'role_1');
         $user2  = new \stdClass();
 
         $msg    = 'returns null for non-user target';

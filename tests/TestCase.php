@@ -2,9 +2,9 @@
 
 namespace UnstoppableCarl\Arbiter\Tests;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole;
-use UnstoppableCarl\Arbiter\Tests\App\Models\User;
 
 class TestCase extends BaseTestCase
 {
@@ -20,12 +20,21 @@ class TestCase extends BaseTestCase
         }, $out);
     }
 
-    protected function freshUser($id, $primaryRole)
+    protected function mockUser($id, $primaryRole)
     {
-        return new User([
-            'id'              => $id,
-            'primaryRoleName' => $primaryRole,
-        ]);
+        $interfaces = [UserWithPrimaryRole::class, Authenticatable::class];
+
+        $mock = $this
+            ->getMockBuilder($interfaces)
+            ->getMock();
+
+        $mock->method('getPrimaryRoleName')
+             ->willReturn($primaryRole);
+
+        $mock->method('getAuthIdentifier')
+             ->willReturn($id);
+
+        return $mock;
     }
 
     protected function mockUserWithPrimaryRole($primaryRole)
