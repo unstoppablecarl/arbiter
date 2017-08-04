@@ -11,6 +11,9 @@ use UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider;
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 
+/**
+ * @covers \UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider
+ */
 class ArbiterServiceProviderTest extends TestCase
 {
     protected function freshApp(array $config = [])
@@ -23,10 +26,6 @@ class ArbiterServiceProviderTest extends TestCase
         return $app;
     }
 
-    /**
-     * @covers ArbiterServiceProvider::register()
-     * @covers ArbiterServiceProvider::boot()
-     */
     public function testConfig()
     {
         $app       = $this->freshApp();
@@ -52,42 +51,4 @@ class ArbiterServiceProviderTest extends TestCase
         $actual   = $app->make(TargetSelfOverridesContract::class);
         $this->assertInstanceOf($expected, $actual);
     }
-//
-//    public function testUserPolicy()
-//    {
-//        $config = [
-//            'arbiter' => [
-//                'override_when_self'     => [
-//                    'view'   => true,
-//                    'delete' => false,
-//                ],
-//                'primary_role_abilities' => [
-//                    'primary_role_1' => [
-//                        'permissions' => [
-//                            'ability_true'  => ['result_1'],
-//                            'ability_false' => ['result_2'],
-//                        ],
-//                    ],
-//                    'primary_role_2' => [
-//                        'permissions' => [
-//                            'ability2_true'  => ['result_3'],
-//                            'ability2_false' => ['result_4'],
-//                        ],
-//                    ],
-//
-//                ],
-//            ],
-//        ];
-//
-//        $app = $this->freshApp($config);
-//        /** @var UserAuthorityContract $userAuthority */
-//        $userAuthority = $app->make(UserAuthorityContract::class);
-//        /** @var UserPolicy $policy */
-//        $policy = $app->make(UserPolicy::class);
-//
-//        $msg      = 'injects UserAuthorityContract';
-//        $expected = $userAuthority->getPrimaryRoles();
-//        $actual   = $policy->getPrimaryRoles();
-//        $this->assertEquals($expected, $actual, $msg);
-//    }
 }

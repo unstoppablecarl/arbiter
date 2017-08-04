@@ -3,6 +3,7 @@
 namespace UnstoppableCarl\Arbiter\Tests\Unit\Providers;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Fluent;
 use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
@@ -12,11 +13,11 @@ use UnstoppableCarl\Arbiter\UserAuthority;
 
 class HandlesArbiterBindingsTest extends TestCase
 {
-    protected function freshApp()
+    protected function freshApp($provider = TestServiceProvider::class)
     {
         $testAppPath = $this->basePath();
         $app         = new Application($testAppPath);
-        $app->register(TestServiceProvider::class);
+        $app->register($provider);
         $app->boot();
         return $app;
     }
@@ -33,13 +34,15 @@ class HandlesArbiterBindingsTest extends TestCase
     protected function assertBound(Application $app, $contract, $concrete, $shared)
     {
         $this->assertTrue(
-            $app->bound($contract)
+            $app->bound($contract),
+            $contract . ' contract is bound'
         );
 
-        $this->assertSame($shared, $app->isShared($contract));
+        $this->assertSame($shared, $app->isShared($contract), 'is shared matches arg');
 
         $instance = $app->make($contract);
-        $this->assertInstanceOf($concrete, $instance);
+        $msg      = 'is instance of ' . $concrete;
+        $this->assertInstanceOf($concrete, $instance, $msg);
     }
 
     public function defaultBindings()
@@ -55,6 +58,7 @@ class HandlesArbiterBindingsTest extends TestCase
      */
     public function testDefaultBindings($contract, $concrete, $method)
     {
+
         $app = $this->freshApp();
         /** @var TestServiceProvider $provider */
         $provider = $app->getProvider(TestServiceProvider::class);
@@ -78,4 +82,43 @@ class HandlesArbiterBindingsTest extends TestCase
         $this->assertBound($app, $contract, $concrete, true);
     }
 
+    public function testUserAuthorityPrimaryRoleAbilitiesInjection()
+    {
+        $settings = [
+            'role_1' => [
+                'ability_1' => ['role_2', 'role_3'],
+            ],
+        ];
+
+        $app = $this->freshApp();
+
+        /** @var TestServiceProvider $provider */
+        $provider = $app->getProvider(TestServiceProvider::class);
+        $provider->public_registerUserAuthority(false, Fluent::class);
+        $provider->set_userAuthorityPrimaryRoleAbilities($settings);
+
+        $userAuthority = $app->make(UserAuthorityContract::class);
+
+        $this->assertSame($settings, $userAuthority->toArray());
+    }
+
+    public function testTargetSelfOverridesInjection()
+    {
+        $settings = [
+            'ability_1' => true,
+            'ability_2' => false,
+            'ability_3' => null,
+        ];
+
+        $app = $this->freshApp();
+
+        /** @var TestServiceProvider $provider */
+        $provider = $app->getProvider(TestServiceProvider::class);
+        $provider->public_registerTargetSelfOverrides(false, Fluent::class);
+        $provider->set_targetSelfOverrides($settings);
+
+        $userAuthority = $app->make(TargetSelfOverridesContract::class);
+
+        $this->assertSame($settings, $userAuthority->toArray());
+    }
 }

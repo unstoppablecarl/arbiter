@@ -3,6 +3,7 @@
 namespace UnstoppableCarl\Arbiter\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole;
 use UnstoppableCarl\Arbiter\Tests\App\Models\User;
 
 class TestCase extends BaseTestCase
@@ -25,5 +26,14 @@ class TestCase extends BaseTestCase
             'id'              => $id,
             'primaryRoleName' => $primaryRole,
         ]);
+    }
+
+    protected function mockUserWithPrimaryRole($primaryRole)
+    {
+        $mock = $this->createMock(UserWithPrimaryRole::class);
+
+        $mock->method('getPrimaryRoleName')
+             ->willReturn($primaryRole);
+        return $mock;
     }
 }

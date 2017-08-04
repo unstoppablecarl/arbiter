@@ -9,38 +9,42 @@ use UnstoppableCarl\Arbiter\UserAuthority;
 
 class TestableArbiterServiceProvider extends ServiceProvider
 {
-    use HandlesArbiterBindings;
+    use HandlesArbiterBindings {
+        targetSelfOverrides as trait_targetSelfOverrides;
+        userAuthorityPrimaryRoleAbilities as trait_userAuthorityPrimaryRoleAbilities;
+    }
 
     protected $userAuthorityPrimaryRoleAbilities = [];
-    protected $targetSelfOverrides               = [];
 
-    public function public_registerUserAuthority($shared = false)
+    protected function userAuthorityPrimaryRoleAbilities()
     {
-        $this->registerUserAuthority($shared);
+        return $this->userAuthorityPrimaryRoleAbilities ?: $this->trait_userAuthorityPrimaryRoleAbilities();
     }
 
-    public function public_registerTargetSelfOverrides($shared = false)
-    {
-        $this->registerTargetSelfOverrides($shared);
-    }
-
-    public function setTargetSelfOverrides($targetSelfOverrides)
-    {
-        $this->targetSelfOverrides = $targetSelfOverrides;
-    }
-
-    public function setUserAuthorityPrimaryRoleAbilities($userAuthorityPrimaryRoleAbilities)
+    public function set_userAuthorityPrimaryRoleAbilities($userAuthorityPrimaryRoleAbilities)
     {
         $this->userAuthorityPrimaryRoleAbilities = $userAuthorityPrimaryRoleAbilities;
     }
 
-    protected function userAuthorityPrimaryRoleAbilities()
+    public function public_registerUserAuthority($shared = false, $concreteClass = UserAuthority::class)
     {
-        return $this->userAuthorityPrimaryRoleAbilities;
+        $this->registerUserAuthority($shared, $concreteClass);
     }
+
+    protected $targetSelfOverrides = [];
 
     protected function targetSelfOverrides()
     {
-        return $this->targetSelfOverrides;
+        return $this->targetSelfOverrides ?: $this->trait_targetSelfOverrides();
+    }
+
+    public function set_targetSelfOverrides($targetSelfOverrides)
+    {
+        $this->targetSelfOverrides = $targetSelfOverrides;
+    }
+
+    public function public_registerTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class)
+    {
+        $this->registerTargetSelfOverrides($shared, $concreteClass);
     }
 }

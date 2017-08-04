@@ -1,6 +1,6 @@
 <?php
 
-namespace UnstoppableCarl\Arbiter\Tests\Unit\Policies;
+namespace UnstoppableCarl\Arbiter\Tests\Unit;
 
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
 use UnstoppableCarl\Arbiter\Tests\TestCase;

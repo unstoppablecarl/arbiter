@@ -2,43 +2,25 @@
 
 namespace UnstoppableCarl\Arbiter\Tests\Unit;
 
-use Illuminate\Container\Container;
-use Illuminate\Auth\Access\Gate;
+use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
+use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
+use UnstoppableCarl\Arbiter\Tests\App\Policies\TestableUserPolicy;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
-use UnstoppableCarl\Arbiter\Tests\App\Models\User;
-use UnstoppableCarl\Arbiter\Tests\App\Policies\UserPolicy;
 
 /**
- * Class UserPolicyTest
- * @package UnstoppableCarl\Arbiter\Tests\Unit
- * @ig
+ * @covers \UnstoppableCarl\Arbiter\Policies\UserPolicy::__construct()
  */
 class UserPolicyTest extends TestCase
 {
-    public function setUp()
+
+    public function testUserPolicyConstructor()
     {
-        parent::setUp();
-        $this->markTestSkipped(
-            'TODO'
-        );
-    }
+        $userAuthority       = $this->createMock(UserAuthorityContract::class);
+        $targetSelfOverrides = $this->createMock(TargetSelfOverridesContract::class);
 
-    protected function freshGate($user, array $data, array $overrides = null)
-    {
-        $container = new Container();
+        $policy = new TestableUserPolicy($userAuthority, $targetSelfOverrides);
 
-        $userResolver = function () use ($user) {
-            return $user;
-        };
-
-        $gate = new Gate($container, $userResolver);
-        $gate->policy(User::class, UserPolicy::class);
-
-        return $gate;
-    }
-
-    public function testGetters()
-    {
-        $this->assertTrue(true);
+        $this->assertSame($userAuthority, $policy->getUserAuthority());
+        $this->assertSame($targetSelfOverrides, $policy->getTargetSelfOverrides());
     }
 }
