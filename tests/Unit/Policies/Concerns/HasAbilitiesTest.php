@@ -11,6 +11,10 @@ use UnstoppableCarl\Arbiter\Tests\TestCase;
  */
 class HasAbilitiesTest extends TestCase
 {
+    protected function mockUser($primaryRole)
+    {
+        return $this->mockUserWithPrimaryRole($primaryRole);
+    }
 
     public function abilityWithTarget()
     {
@@ -29,7 +33,7 @@ class HasAbilitiesTest extends TestCase
     public function testAbility($method, $userAuthorityMethod)
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUserWithPrimaryRole($sourcePrimaryRole);
+        $source            = $this->mockUser($sourcePrimaryRole);
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);
         $policy        = new UserPolicyWithAbilities($userAuthority);
@@ -48,7 +52,7 @@ class HasAbilitiesTest extends TestCase
     public function testAbilityWithStringTarget($method, $userAuthorityMethod)
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUserWithPrimaryRole($sourcePrimaryRole);
+        $source            = $this->mockUser($sourcePrimaryRole);
         $target            = 'target_primary_role';
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);
@@ -68,9 +72,9 @@ class HasAbilitiesTest extends TestCase
     public function testAbilityWithUserTarget($method, $userAuthorityMethod)
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUserWithPrimaryRole($sourcePrimaryRole);
+        $source            = $this->mockUser($sourcePrimaryRole);
         $targetPrimaryRole = 'target_primary_role';
-        $target            = $this->mockUserWithPrimaryRole($targetPrimaryRole);
+        $target            = $this->mockUser($targetPrimaryRole);
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);
         $policy        = new UserPolicyWithAbilities($userAuthority);
@@ -86,9 +90,9 @@ class HasAbilitiesTest extends TestCase
     public function testChangePrimaryRoleWithUserTarget()
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUserWithPrimaryRole($sourcePrimaryRole);
+        $source            = $this->mockUser($sourcePrimaryRole);
         $targetPrimaryRole = 'target_primary_role';
-        $target            = $this->mockUserWithPrimaryRole($targetPrimaryRole);
+        $target            = $this->mockUser($targetPrimaryRole);
         $primaryRole       = 'new_primary_role';
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);
@@ -106,7 +110,7 @@ class HasAbilitiesTest extends TestCase
     public function testChangePrimaryRoleWithStringTarget()
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUserWithPrimaryRole($sourcePrimaryRole);
+        $source            = $this->mockUser($sourcePrimaryRole);
         $target            = 'target_primary_role';
         $primaryRole       = 'new_primary_role';
 
@@ -124,7 +128,7 @@ class HasAbilitiesTest extends TestCase
     public function testCreate()
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUserWithPrimaryRole($sourcePrimaryRole);
+        $source            = $this->mockUser($sourcePrimaryRole);
         $primaryRole       = 'new_primary_role';
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);

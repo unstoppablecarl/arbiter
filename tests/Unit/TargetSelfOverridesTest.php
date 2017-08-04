@@ -11,6 +11,11 @@ use UnstoppableCarl\Arbiter\Tests\TestCase;
 class TargetSelfOverridesTest extends TestCase
 {
 
+    protected function mockUser($id, $primaryRole)
+    {
+        return $this->mockUserWithAuthAndPrimaryRole($id, $primaryRole);
+    }
+
     public function abilityValueProvider()
     {
         return $this->wrapSingleArgumentProviderData([

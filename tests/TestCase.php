@@ -20,7 +20,7 @@ class TestCase extends BaseTestCase
         }, $out);
     }
 
-    protected function mockUser($id, $primaryRole)
+    protected function mockUserWithAuthAndPrimaryRole($id, $primaryRole)
     {
         $interfaces = [UserWithPrimaryRole::class, Authenticatable::class];
 
