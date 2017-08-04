@@ -13,6 +13,17 @@ use UnstoppableCarl\Arbiter\UserAuthority;
  */
 class UserAuthorityTest extends TestCase
 {
+
+    public function falsyValueProvider()
+    {
+        return [
+            [null],
+            [false],
+            [0],
+            [[]],
+        ];
+    }
+
     /**
      * @covers \UnstoppableCarl\Arbiter\UserAuthority::getPrimaryRoles()
      */
@@ -109,25 +120,21 @@ class UserAuthorityTest extends TestCase
     }
 
     /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::can()
+     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::can()
+     * @dataProvider falsyValueProvider
      */
-    public function testCanWithFalsyTargets()
+    public function testCanWithFalsyTargets($value)
     {
         $data = [
             'role_1' => [
-                'ability_1' => false,
-                'ability_2' => null,
-                'ability_3' => 0,
-                'ability_4' => [],
+                'ability_1' => $value,
             ],
         ];
 
         $userAuth = new UserAuthority($data);
 
+        $this->assertSame(false, $userAuth->can('role_1', 'ability_1', 'role_1'));
         $this->assertSame(false, $userAuth->can('role_1', 'ability_1', 'role_2'));
-        $this->assertSame(false, $userAuth->can('role_1', 'ability_2', 'role_2'));
-        $this->assertSame(false, $userAuth->can('role_1', 'ability_3', 'role_2'));
-        $this->assertSame(false, $userAuth->can('role_1', 'ability_4', 'role_2'));
     }
 
     /**
@@ -150,45 +157,34 @@ class UserAuthorityTest extends TestCase
     }
 
     /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::canAny()
+     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canAny()
+     * @dataProvider falsyValueProvider
      */
-    public function testCanAnyWithFalsyTargets()
+    public function testCanAnyWithFalsyTargets($value)
     {
         $data = [
             'role_1' => [
-                'ability_1' => false,
-                'ability_2' => null,
-                'ability_3' => 0,
-                'ability_4' => [],
+                'ability_1' => $value,
             ],
         ];
 
         $userAuth = new UserAuthority($data);
 
         $this->assertSame(false, $userAuth->canAny('role_1', 'ability_1'));
-        $this->assertSame(false, $userAuth->canAny('role_1', 'ability_2'));
-        $this->assertSame(false, $userAuth->canAny('role_1', 'ability_3'));
-        $this->assertSame(false, $userAuth->canAny('role_1', 'ability_4'));
     }
 
     /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::canAny()
+     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canAny()
+     * @dataProvider falsyValueProvider
      */
-    public function testCanAnyWithFalsyAbilities()
+    public function testCanAnyWithFalsyAbilities($value)
     {
         $data = [
-            'role_1' => false,
-            'role_2' => null,
-            'role_3' => 0,
-            'role_4' => [],
+            'role_1' => $value,
         ];
 
         $userAuth = new UserAuthority($data);
-
         $this->assertSame(false, $userAuth->canAny('role_1', 'not_set_ability'));
-        $this->assertSame(false, $userAuth->canAny('role_2', 'not_set_ability'));
-        $this->assertSame(false, $userAuth->canAny('role_3', 'not_set_ability'));
-        $this->assertSame(false, $userAuth->canAny('role_4', 'not_set_ability'));
     }
 
     /**
@@ -444,7 +440,7 @@ class UserAuthorityTest extends TestCase
     }
 
     /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::getChangeableToPrimaryRoles()
+     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getChangeableToPrimaryRoles()
      * @dataProvider getChangeableToPrimaryRolesWithTarget()
      */
     public function testGetChangeableToPrimaryRolesWithTarget($toRoles)
