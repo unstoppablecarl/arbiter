@@ -64,7 +64,7 @@ trait HasGetters
      * @param string|User|null $target primary role name or User to get primary role from
      * @return array
      */
-    public function getUpdatableToPrimaryRoles($source, $target = null)
+    public function getChangeableToPrimaryRoles($source, $target = null)
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);

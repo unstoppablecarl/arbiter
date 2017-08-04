@@ -9,39 +9,43 @@ use UnstoppableCarl\Arbiter\UserAuthority;
 
 trait HandlesArbiterBindings
 {
-    protected function registerUserAuthority($shared = false)
+    /**
+     * @param bool $shared
+     * @param string $concreteClass Used for testing
+     */
+    protected function registerUserAuthority($shared = false, $concreteClass = UserAuthority::class)
     {
-        $this->app->bind(UserAuthorityContract::class, function () {
-            return $this->buildUserAuthority(
+        $this->app->bind(UserAuthorityContract::class, function () use ($concreteClass) {
+            return new $concreteClass(
                 $this->userAuthorityPrimaryRoleAbilities()
             );
         }, $shared);
     }
 
-    protected function buildUserAuthority($primaryRoleAbilities)
-    {
-        return new UserAuthority($primaryRoleAbilities);
-    }
-
+    /**
+     * @return array
+     */
     protected function userAuthorityPrimaryRoleAbilities()
     {
         return [];
     }
 
-    protected function registerTargetSelfOverrides($shared = false)
+    /**
+     * @param bool $shared
+     * @param string $concreteClass Used for testing
+     */
+    protected function registerTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class)
     {
-        $this->app->bind(TargetSelfOverridesContract::class, function () {
-            return $this->buildTargetSelfOverrides(
+        $this->app->bind(TargetSelfOverridesContract::class, function () use ($concreteClass) {
+            return new $concreteClass(
                 $this->targetSelfOverrides()
             );
         }, $shared);
     }
 
-    protected function buildTargetSelfOverrides(array $overrides)
-    {
-        return new TargetSelfOverrides($overrides);
-    }
-
+    /**
+     * @return array
+     */
     protected function targetSelfOverrides()
     {
         return [];
