@@ -92,6 +92,16 @@ interface UserAuthorityContract
     public function canChangePrimaryRoleTo($source, $target = null);
 
     /**
+     * Check if $source can change primary role of a $target to $newPrimaryRole
+     * Checks canChangePrimaryRoleFrom and canChangePrimaryRoleTo
+     * @param string $source primary role
+     * @param string $target primary role
+     * @param string $newPrimaryRole
+     * @return bool
+     */
+    public function canChangePrimaryRole($source, $target, $newPrimaryRole);
+
+    /**
      * Get list of primary role names.
      * @return array
      */
@@ -121,11 +131,25 @@ interface UserAuthorityContract
     public function getCreatablePrimaryRoles($source);
 
     /**
+     * Get primary roles that a user must have to be deleted by $source.
+     * @param string $source primary role
+     * @return array
+     */
+    public function getUpdatablePrimaryRoles($source);
+
+    /**
+     * Get primary roles that a user must have to be deleted by $source.
+     * @param string $source primary role
+     * @return array
+     */
+    public function getDeletablePrimaryRoles($source);
+
+    /**
      * Get primary roles that $source can change the primary role of.
      * @param string $source primary role
      * @return array
      */
-    public function getUpdatableFromPrimaryRoles($source);
+    public function getChangeableFromPrimaryRoles($source);
 
     /**
      * Get primary roles that $source can change on $target.
@@ -135,12 +159,5 @@ interface UserAuthorityContract
      * @param string|null $target primary role
      * @return array
      */
-    public function getUpdatableToPrimaryRoles($source, $target = null);
-
-    /**
-     * Get primary roles that a user must have to be deleted by $source.
-     * @param string $source primary role
-     * @return array
-     */
-    public function getDeletablePrimaryRoles($source);
+    public function getChangeableToPrimaryRoles($source, $target = null);
 }

@@ -59,44 +59,143 @@ The developer implements the interface with a strategy for determining what the 
    - Define a numeric priority to each Role. The Primary Role of a User is the Role with the highest priority assigned to them.
  - Users have exactly one Role which is used as the Primary Role. This is often a good starting point projects where it is unclear how complex the roles/permissions requirements will become. 
 
-### In Depth
+## Basic Usage
 
-The files are well commented with clear explanations.
 
-[`UserAuthorityContract`](src/Contracts/UserAuthorityContract.php)
+### User
 
-Provides a simple interface for checking what abilities a *Primary Role* has when targeting another *Primary Role*.
+Implement the `UserWithPrimaryRole` Interface on your `User` model.
 
-[`UnstoppableCarl\Arbiter\UserAuthority`](src/UserAuthority.php)
-
-A simple array configuration based implementation is available here.
-
-[`UnstoppableCarl\Arbiter\Policies\UserPolicy`](src/Policies/UserPolicy.php)
-
-Leverages the `UserAuthority` for authorizing actions. It also can override abilities when a user is targeting them self.
-
-## Usage
-
-Implement the [`UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole`](src/Contracts/UserWithPrimaryRole.php) Contract on your `User` model.
+See [`UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole`](src/Contracts/UserWithPrimaryRole.php)
 
 ```php
 <?php
 
-namespace App\User;
+namespace App;
 
 use UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole;
 
-class UserPolicy implements UserWithPrimaryRole
+class User implements UserWithPrimaryRole
 {
     public function getPrimaryRoleName()
     {
         // @TODO implement Primary Role strategy
-        return false;
+        
+        // simple example
+        // not recommended
+        return $this->primary_role ?: 'default_primary_role';
     }
 } 
 ```
 
-Extend `App\Policies\UserPolicy` with [`UnstoppableCarl\Arbiter\Policies\UserPolicy`](src/Policies/UserPolicy.php)
+### User Policy
+
+Create `App\Policies\UserPolicy` and set it as the policy for the `User` model in `App\Providers\AuthServiceProvider`
+
+See [`UserPolicy`](src/UnstoppableCarl\Arbiter\Policies\UserPolicy.php)
+
+
+```php
+<?php
+
+namespace App\Policies;
+
+use UnstoppableCarl\Arbiter\Policies\UserPolicy as ArbiterUserPolicy;
+
+class UserPolicy extends ArbiterUserPolicy
+{
+
+}
+```
+
+### User Authority
+
+Create and bind an implementation of the `UserAuthorityContract` in your `AuthServiceProvider` or continue with the Config Based User Authority below.
+
+#### Config Based Implementation
+
+Arbiter includes a simple config based `UserAuthority` implementation to quickly get your project up and running. 
+ 
+##### ArbiterServiceProvider
+
+Add the Service Provider to `config/app.php`
+
+`UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider::class,`
+
+##### Configure
+
+Publish the config file.
+
+`php artisan vendor:publish --provider=UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider`
+
+Primary Role Abilities can be configured in `config/arbiter.php`.
+
+
+## Customizing The User Policy
+
+The `UserPolicy` functionality is organized into seperate traits to allow use of only the functionality you want.
+
+ - See
+   - [`Concerns`](src/Policies/Concerns)
+   - [`UserPolicy`](src/Policies/UserPolicy.php)
+
+
+#### UserPolicy Trait: HasUserAuthority
+
+[`HasUserAuthority`](src/Policies/Concerns/HasUserAuthority.php)
+
+Adds a reference to the `UserAuthority` instance. 
+
+ - Required for `HasAbilities` and `HasGetters` traits.
+ - Gets the primary role of ability targets that implement the `UserWithPrimaryRole` interface via a `toPrimaryRole` method.
+
+#### Trait: HasAbilities
+
+[`HasAbilities`](src/Policies/Concerns/HasAbilities.php)
+ 
+Adds the typical abilities of a `UserPolicy` matching them to the methods and abilities of the `UserAuthority`.
+ 
+ - Requires `HasUserAuthority` trait.
+ - Methods
+   - create
+   - update
+   - delete
+   - view
+   - changePrimaryRoleFrom
+   - changePrimaryRoleTo 
+   - changePrimaryRole
+
+
+#### Trait: HasGetters
+
+[`HasGetters`](src/Policies/Concerns/HasGetters.php)
+
+Adds getters to allow retrieval of all primary roles a user can perform given abilities on.
+
+ - Requires `HasUserAuthority` trait.
+ - Methods
+   - getViewablePrimaryRoles
+   - getCreatablePrimaryRoles
+   - getChangeableFromPrimaryRoles
+   - getChangeableToPrimaryRoles
+   - getDeletablePrimaryRoles
+   - getPrimaryRoles
+   
+
+
+#### Trait: HasTargetSelfOverrides
+
+[`HasTargetSelfOverrides`](src/Policies/Concerns/HasTargetSelfOverrides.php)
+
+Allows overriding the returned value of a `UserPolicy` ability check, when the source and target of the check are the same `User`. The ability check is overriden by using the `before` method behavior of Laravel Policies.
+
+- The `$targetSelfOverrides` property must be set to an implementation of the [`TargetSelfOverridesContract`](src/Contracts/TargetSelfOverridesContract.php). In the included [`UserPolicy`](src/UnstoppableCarl\Arbiter\Policies\UserPolicy.php) it is set via the constructor.
+-  [`TargetSelfOverrides`](src/TargetSelfOverrides.php) is a minimal implementation included and used by default in the [`ArbiterServiceProvider`](src/Providers/ArbiterServiceProvider).
+
+#### Adding User Authority Abilities
+
+The following shows how to add an ability to the `UserPolicy` that checks a custom ability set in the `UserAuthority`. 
+
 ```php
 <?php
 
@@ -108,31 +207,20 @@ use UnstoppableCarl\Arbiter\Policies\UserPolicy as ArbiterUserPolicy;
 class UserPolicy extends ArbiterUserPolicy
 {
     /**
-     * Override the returned value when a User is targeting self. 
-     * @var array
-     */
-    protected $overrideWhenSelf = [
-        'update'            => true,
-        'delete'            => false,
-        'changePrimaryRole' => false,
-    ];
-
-    /**
-     * Boilerplate for adding a User Policy ability.
+     * Can ban users with $target Primary Role
      * @param UserWithPrimaryRole $source
      * @param UserWithPrimaryRole|null $target
      * @return
      */
-    public function myCustomAbility(UserWithPrimaryRole $source, $target = null)
+    public function ban(UserWithPrimaryRole $source, $target = null)
     {
         $source  = $this->toPrimaryRole($source);
         $target  = $this->toPrimaryRole($target);
-        $ability = 'my_ability_name';
-        return $this->userAbilities->canOrAny($source, $ability, $target);
+        $ability = 'ban';
+        return $this->userAuthority()->canOrAny($source, $ability, $target);
     }
 }
 ```
-
 
 ## Running Tests
 
@@ -143,6 +231,7 @@ $ composer phpunit
 ```
 
 Run Codesniffer (psr-2)
+
 ```
 $ composer phpcs
 ```
