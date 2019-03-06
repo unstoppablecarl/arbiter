@@ -92,7 +92,7 @@ class User implements UserWithPrimaryRole
 
 Create `App\Policies\UserPolicy` and set it as the policy for the `User` model in `App\Providers\AuthServiceProvider`
 
-See [`UserPolicy`](src/UnstoppableCarl\Arbiter\Policies\UserPolicy.php)
+See [`UserPolicy`](src/Policies/UserPolicy.php)
 
 
 ```php
