@@ -9,14 +9,11 @@ class ArbiterServiceProvider extends ServiceProvider
 {
     use HandlesArbiterBindings;
 
-    /**
-     * @var string
-     */
-    protected $configFile = __DIR__ . '/../../config/arbiter.php';
+    protected string $configFile = __DIR__ . '/../../config/arbiter.php';
 
-    public function boot()
+    public function boot(): void
     {
-        $source      = realpath($this->configFile);
+        $source = realpath($this->configFile);
         $destination = config_path(basename($this->configFile));
 
         $this->publishes([
@@ -24,30 +21,30 @@ class ArbiterServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
         $this->registerUserAuthority();
         $this->registerTargetSelfOverrides();
     }
 
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $configKey = basename($this->configFile, '.php');
         $this->mergeConfigFrom($this->configFile, $configKey);
     }
 
-    protected function userAuthorityPrimaryRoleAbilities()
+    protected function userAuthorityPrimaryRoleAbilities(): array
     {
         return $this->config('user_authority.primary_role_abilities', []);
     }
 
-    protected function targetSelfOverrides()
+    protected function targetSelfOverrides(): array
     {
         return $this->config('target_self_overrides.ability_overrides', []);
     }
 
-    protected function config($key, $default = null)
+    protected function config(string $key, $default = null): mixed
     {
         return $this->app['config']->get('arbiter.' . $key, $default);
     }

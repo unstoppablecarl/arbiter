@@ -14,36 +14,36 @@ class TestableArbiterServiceProvider extends ServiceProvider
         userAuthorityPrimaryRoleAbilities as trait_userAuthorityPrimaryRoleAbilities;
     }
 
-    protected $userAuthorityPrimaryRoleAbilities = [];
+    protected array $userAuthorityPrimaryRoleAbilities = [];
 
     protected function userAuthorityPrimaryRoleAbilities()
     {
         return $this->userAuthorityPrimaryRoleAbilities ?: $this->trait_userAuthorityPrimaryRoleAbilities();
     }
 
-    public function setUserAuthorityPrimaryRoleAbilities($userAuthorityPrimaryRoleAbilities)
+    public function setUserAuthorityPrimaryRoleAbilities($userAuthorityPrimaryRoleAbilities): void
     {
         $this->userAuthorityPrimaryRoleAbilities = $userAuthorityPrimaryRoleAbilities;
     }
 
-    public function publicRegisterUserAuthority($shared = false, $concreteClass = UserAuthority::class)
+    public function publicRegisterUserAuthority($shared = false, $concreteClass = UserAuthority::class): void
     {
         $this->registerUserAuthority($shared, $concreteClass);
     }
 
-    protected $targetSelfOverrides = [];
+    protected array $targetSelfOverrides = [];
 
-    protected function targetSelfOverrides()
+    protected function targetSelfOverrides(): array
     {
         return $this->targetSelfOverrides ?: $this->trait_targetSelfOverrides();
     }
 
-    public function setTargetSelfOverrides($targetSelfOverrides)
+    public function setTargetSelfOverrides($targetSelfOverrides): void
     {
         $this->targetSelfOverrides = $targetSelfOverrides;
     }
 
-    public function publicRegisterTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class)
+    public function publicRegisterTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class): void
     {
         $this->registerTargetSelfOverrides($shared, $concreteClass);
     }

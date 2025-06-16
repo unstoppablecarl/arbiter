@@ -2,13 +2,13 @@
 
 namespace UnstoppableCarl\Arbiter\Tests\Unit\Policies\Concerns;
 
+use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
 use UnstoppableCarl\Arbiter\Tests\App\Policies\UserPolicyWithGetters;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 
-/**
- * @covers \UnstoppableCarl\Arbiter\Policies\Concerns\HasGetters
- */
+#[CoversTrait(\UnstoppableCarl\Arbiter\Policies\Concerns\HasGetters::class)]
 class HasGettersTest extends TestCase
 {
     protected function mockUser($primaryRole)
@@ -29,7 +29,7 @@ class HasGettersTest extends TestCase
         $policy->getPrimaryRoles();
     }
 
-    public function getterProvider()
+    static public function getterProvider()
     {
         return [
             ['getViewablePrimaryRoles'],
@@ -40,16 +40,14 @@ class HasGettersTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getterProvider
-     */
+    #[DataProvider('getterProvider')]
     public function testGetter($method)
     {
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUser($sourcePrimaryRole);
+        $source = $this->mockUser($sourcePrimaryRole);
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);
-        $policy        = new UserPolicyWithGetters($userAuthority);
+        $policy = new UserPolicyWithGetters($userAuthority);
 
         $userAuthority
             ->expects($this->once())
@@ -64,11 +62,11 @@ class HasGettersTest extends TestCase
         $method = 'getChangeableToPrimaryRoles';
         $sourcePrimaryRole = 'source_primary_role';
         $targetPrimaryRole = 'target_primary_role';
-        $source            = $this->mockUser($sourcePrimaryRole);
-        $target            = $this->mockUser($targetPrimaryRole);
+        $source = $this->mockUser($sourcePrimaryRole);
+        $target = $this->mockUser($targetPrimaryRole);
 
         $userAuthority = $this->createMock(UserAuthorityContract::class);
-        $policy        = new UserPolicyWithGetters($userAuthority);
+        $policy = new UserPolicyWithGetters($userAuthority);
 
         $userAuthority
             ->expects($this->once())
@@ -82,10 +80,10 @@ class HasGettersTest extends TestCase
     {
         $method = 'getChangeableToPrimaryRoles';
         $sourcePrimaryRole = 'source_primary_role';
-        $source            = $this->mockUser($sourcePrimaryRole);
+        $source = $this->mockUser($sourcePrimaryRole);
         $target = 'target_primary_role';
         $userAuthority = $this->createMock(UserAuthorityContract::class);
-        $policy        = new UserPolicyWithGetters($userAuthority);
+        $policy = new UserPolicyWithGetters($userAuthority);
 
         $userAuthority
             ->expects($this->once())

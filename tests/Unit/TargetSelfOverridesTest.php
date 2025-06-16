@@ -2,12 +2,12 @@
 
 namespace UnstoppableCarl\Arbiter\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 
-/**
- * @covers \UnstoppableCarl\Arbiter\TargetSelfOverrides
- */
+#[CoversClass(\UnstoppableCarl\Arbiter\TargetSelfOverrides::class)]
 class TargetSelfOverridesTest extends TestCase
 {
 
@@ -16,85 +16,61 @@ class TargetSelfOverridesTest extends TestCase
         return $this->mockUserWithAuthAndPrimaryRole($id, $primaryRole);
     }
 
-    public function abilityValueProvider()
+    static public function abilityValueProvider(): array
     {
-        return $this->wrapSingleArgumentProviderData([
-            [true],
-            [false],
-            [null],
+        return static::wrapSingleArgumentProviderData([
+            true,
+            false,
+            null,
         ]);
     }
 
-    /**
-     * @dataProvider abilityValueProvider()
-     * @param $value
-     */
+    #[DataProvider('abilityValueProvider')]
     public function testDifferentUsers($value)
     {
         $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
-        $user1  = $this->mockUser(1, 'role_1');
-        $user2  = $this->mockUser(2, 'role_2');
+        $user1 = $this->mockUser(1, 'role_1');
+        $user2 = $this->mockUser(2, 'role_2');
 
-        $actual = $overrides->before($user1, 'ability', $user2);
-        $msg    = 'correctly identifies different users and ignores overrides';
-        $this->assertNull($actual, $msg);
-
-        $actual = $overrides->callBefore([$user1, 'ability', $user2]);
+        $actual = $overrides->shouldOverride($user1, 'ability', $user2);
+        $msg = 'correctly identifies different users and ignores overrides';
         $this->assertNull($actual, $msg);
     }
 
-    /**
-     * @dataProvider abilityValueProvider()
-     * @param $value
-     */
+    #[DataProvider('abilityValueProvider')]
     public function testSameUser($value)
     {
         $overrides = new TargetSelfOverrides([
             'ability' => $value,
         ]);
-        $user   = $this->mockUser(1, 'role_1');
-        $msg    = 'correctly identifies different users and ignores overrides';
+        $user = $this->mockUser(1, 'role_1');
+        $msg = 'correctly identifies same user and ignores overrides';
 
         $expected = $value;
-        $actual   = $overrides->before($user, 'ability', $user);
-        $this->assertSame($expected, $actual, $msg);
-
-        $actual = $overrides->callBefore([$user, 'ability', $user]);
+        $actual = $overrides->shouldOverride($user, 'ability', $user);
         $this->assertSame($expected, $actual, $msg);
     }
 
     public function testSameUserWhenEmpty()
     {
         $overrides = new TargetSelfOverrides([]);
-        $user   = $this->mockUser(1, 'role_1');
+        $user = $this->mockUser(1, 'role_1');
 
-        $actual = $overrides->before($user, 'ability', $user);
-        $msg    = 'returns null when same user but no overrides set';
-        $this->assertNull($actual, $msg);
-
-        $actual = $overrides->callBefore([$user, 'ability', $user]);
+        $actual = $overrides->shouldOverride($user, 'ability', $user);
+        $msg = 'returns null when same user but no overrides set';
         $this->assertNull($actual, $msg);
     }
 
-    /**
-     * @dataProvider abilityValueProvider()
-     * @param $value
-     */
-    public function testNonUserTarget($value)
+
+    public function testOtherUserIsPrimaryRoleString()
     {
-        $overrides = new TargetSelfOverrides([
-            'ability' => $value,
-        ]);
-        $user1  = $this->mockUser(1, 'role_1');
-        $user2  = new \stdClass();
+        $overrides = new TargetSelfOverrides([]);
+        $user = $this->mockUser(1, 'role_1');
 
-        $msg    = 'returns null for non-user target';
-        $actual = $overrides->before($user1, 'ability', $user2);
-        $this->assertNull($actual, $msg);
-
-        $actual = $overrides->callBefore([$user1, 'ability', $user2]);
+        $actual = $overrides->shouldOverride($user, 'ability', 'some_primary_role');
+        $msg = 'returns null when other user is a primary role string';
         $this->assertNull($actual, $msg);
     }
 }

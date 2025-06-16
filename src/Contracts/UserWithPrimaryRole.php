@@ -8,10 +8,9 @@ namespace UnstoppableCarl\Arbiter\Contracts;
  */
 interface UserWithPrimaryRole
 {
-
     /**
      * Get the Primary Role of this user.
-     * @return string
+     * @return ?string
      */
-    public function getPrimaryRoleName();
+    public function getPrimaryRoleName(): ?string;
 }

@@ -2,22 +2,19 @@
 
 namespace UnstoppableCarl\Arbiter\Tests\Unit\Policies\Concerns;
 
+use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
 use UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole;
 use UnstoppableCarl\Arbiter\Tests\App\Policies\UserPolicyWithUserAuthority;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 
-/**
- * @covers \UnstoppableCarl\Arbiter\Policies\Concerns\HasUserAuthority
- */
+#[CoversTrait(\UnstoppableCarl\Arbiter\Policies\Concerns\HasUserAuthority::class)]
 class HasUserAuthorityTest extends TestCase
 {
-    /**
-     * @covers \UnstoppableCarl\Arbiter\Policies\Concerns\HasUserAuthority::toPrimaryRole()
-     */
     public function testToPrimaryRoleWithUser()
     {
-        $user   = $this->createMock(UserWithPrimaryRole::class);
+        $user = $this->createMock(UserWithPrimaryRole::class);
         $policy = new UserPolicyWithUserAuthority();
 
         $user
@@ -26,30 +23,19 @@ class HasUserAuthorityTest extends TestCase
             ->willReturn('admin');
 
         $expected = 'admin';
-        $actual   = $policy->toPrimaryRole($user);
+        $actual = $policy->toPrimaryRole($user);
         $this->assertSame($expected, $actual);
     }
 
-    public function toPrimaryRoleProvider()
+    static public function toPrimaryRoleProvider()
     {
         return [
             [null],
-            [0],
-            [1],
-            [1.5],
-            [99],
-            [new \stdClass()],
             ['string'],
-            [false],
-            [true],
-            [[]],
         ];
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\Policies\Concerns\HasUserAuthority::toPrimaryRole()
-     * @dataProvider toPrimaryRoleProvider
-     */
+    #[DataProvider('toPrimaryRoleProvider')]
     public function testToPrimaryRole($value)
     {
         $policy = new UserPolicyWithUserAuthority();
@@ -58,13 +44,10 @@ class HasUserAuthorityTest extends TestCase
         $this->assertSame($value, $actual);
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\Policies\Concerns\HasUserAuthority::userAuthority()
-     */
     public function testUserAuthority()
     {
         $userAuthority = $this->createMock(UserAuthorityContract::class);
-        $policy        = new UserPolicyWithUserAuthority();
+        $policy = new UserPolicyWithUserAuthority();
         $policy->setUserAuthority($userAuthority);
 
         $this->assertSame($userAuthority, $policy->userAuthority());

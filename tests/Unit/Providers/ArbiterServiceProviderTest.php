@@ -4,6 +4,7 @@ namespace UnstoppableCarl\Arbiter\Tests\Unit\Providers;
 
 use Illuminate\Config\Repository;
 use Illuminate\Foundation\Application;
+use PHPUnit\Framework\Attributes\CoversClass;
 use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
 use UnstoppableCarl\Arbiter\Policies\UserPolicy;
@@ -11,12 +12,10 @@ use UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider;
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 
-/**
- * @covers \UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider
- */
+#[CoversClass(\UnstoppableCarl\Arbiter\Providers\ArbiterServiceProvider::class)]
 class ArbiterServiceProviderTest extends TestCase
 {
-    protected function freshApp(array $config = [])
+    protected function freshApp(array $config = []): Application
     {
         $testAppPath = $this->basePath();
         $app         = new Application($testAppPath);

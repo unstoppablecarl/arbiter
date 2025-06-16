@@ -42,7 +42,7 @@ return [
     'target_self_overrides' => [
 
         /**
-         * Overrides the returned value of an ability check when $target is the currently logged in user.
+         * Overrides the returned value of an ability check when $target is the currently logged-in user.
          */
         'ability_overrides' => [
             /* Example Values

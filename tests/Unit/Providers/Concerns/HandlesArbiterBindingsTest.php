@@ -4,9 +4,9 @@ namespace UnstoppableCarl\Arbiter\Tests\Unit\Providers;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Fluent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 use UnstoppableCarl\Arbiter\Contracts\UserAuthorityContract;
-use UnstoppableCarl\Arbiter\Providers\Concerns\HandlesArbiterBindings;
 use UnstoppableCarl\Arbiter\TargetSelfOverrides;
 use UnstoppableCarl\Arbiter\Tests\App\Providers\TestableArbiterServiceProvider as TestServiceProvider;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
@@ -14,10 +14,10 @@ use UnstoppableCarl\Arbiter\UserAuthority;
 
 class HandlesArbiterBindingsTest extends TestCase
 {
-    protected function freshApp($provider = TestServiceProvider::class)
+    protected function freshApp($provider = TestServiceProvider::class): Application
     {
         $testAppPath = $this->basePath();
-        $app         = new Application($testAppPath);
+        $app = new Application($testAppPath);
         $app->register($provider);
         $app->boot();
         return $app;
@@ -32,7 +32,7 @@ class HandlesArbiterBindingsTest extends TestCase
         $this->assertInstanceOf(TestServiceProvider::class, $provider);
     }
 
-    protected function assertBound(Application $app, $contract, $concrete, $shared)
+    protected function assertBound(Application $app, $contract, $concrete, $shared): void
     {
         $this->assertTrue(
             $app->bound($contract),
@@ -42,11 +42,11 @@ class HandlesArbiterBindingsTest extends TestCase
         $this->assertSame($shared, $app->isShared($contract), 'is shared matches arg');
 
         $instance = $app->make($contract);
-        $msg      = 'is instance of ' . $concrete;
+        $msg = 'is instance of ' . $concrete;
         $this->assertInstanceOf($concrete, $instance, $msg);
     }
 
-    public function defaultBindings()
+    static public function defaultBindings(): array
     {
         return [
             [UserAuthorityContract::class, UserAuthority::class, 'publicRegisterUserAuthority'],
@@ -54,9 +54,7 @@ class HandlesArbiterBindingsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider defaultBindings()
-     */
+    #[DataProvider('defaultBindings')]
     public function testDefaultBindings($contract, $concrete, $method)
     {
 
@@ -69,9 +67,7 @@ class HandlesArbiterBindingsTest extends TestCase
         $this->assertBound($app, $contract, $concrete, false);
     }
 
-    /**
-     * @dataProvider defaultBindings()
-     */
+    #[DataProvider('defaultBindings')]
     public function testDefaultSharedBindings($contract, $concrete, $method)
     {
         $app = $this->freshApp();

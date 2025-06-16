@@ -16,16 +16,12 @@ class UserPolicy
     use HasAbilities;
     use HasGetters;
 
-    /**
-     * UserPolicy constructor.
-     * @param UserAuthorityContract $userAuthority
-     * @param TargetSelfOverridesContract|null $targetSelfOverrides
-     */
     public function __construct(
-        UserAuthorityContract $userAuthority,
+        UserAuthorityContract       $userAuthority,
         TargetSelfOverridesContract $targetSelfOverrides
-    ) {
-        $this->userAuthority       = $userAuthority;
+    )
+    {
+        $this->userAuthority = $userAuthority;
         $this->targetSelfOverrides = $targetSelfOverrides;
     }
 }

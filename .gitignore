@@ -7,4 +7,3 @@ docs
 phpunit.xml
 vendor
 coverage
-composer.lock

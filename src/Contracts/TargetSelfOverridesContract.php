@@ -3,10 +3,9 @@
 namespace UnstoppableCarl\Arbiter\Contracts;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthUser;
 
 interface TargetSelfOverridesContract
 {
-    public function callBefore(array $arguments);
-
-    public function before(Authenticatable $user, $ability, $target);
+    public function shouldOverride(Authenticatable $user, string $ability, AuthUser|string $target);
 }

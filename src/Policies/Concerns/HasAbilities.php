@@ -12,25 +12,21 @@ use UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole as User;
  */
 trait HasAbilities
 {
-    /**
-     * @param mixed $value
-     * @return string
-     */
-    abstract protected function toPrimaryRole($value);
+    abstract protected function toPrimaryRole(User|string|null $value): ?string;
 
     /**
      * @return UserAuthorityContract
      */
-    abstract protected function userAuthority();
+    abstract protected function userAuthority(): UserAuthorityContract;
 
     /**
      * Check if $source can view $target.
      * If $target is null, checks if there is ANY $target that this method would return true for.
      * @param User $source
-     * @param string|User $target primary role name or User to get primary role from
+     * @param string|User|null $target primary role name or User to get primary role from
      * @return bool
      */
-    public function view(User $source, $target = null)
+    public function view(User $source, string|User|null $target = null): bool
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);
@@ -45,7 +41,7 @@ trait HasAbilities
      * @param string|null $primaryRole
      * @return bool
      */
-    public function create(User $source, $primaryRole = null)
+    public function create(User $source, ?string $primaryRole = null): bool
     {
         $source = $this->toPrimaryRole($source);
 
@@ -56,10 +52,10 @@ trait HasAbilities
      * Check if $source can update $target
      * If $target is null, checks if there is ANY $target that this method would return true for.
      * @param User $source
-     * @param string|User $target primary role name or User to get primary role from
+     * @param string|User|null $target primary role name or User to get primary role from
      * @return bool
      */
-    public function update(User $source, $target = null)
+    public function update(User $source, string|User|null $target = null): bool
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);
@@ -71,10 +67,10 @@ trait HasAbilities
      * Check if $source can delete $target
      * If $target is null, checks if there is ANY $target that this method would return true for.
      * @param User $source
-     * @param string|User $target primary role name or User to get primary role from
+     * @param string|User|null $target primary role name or User to get primary role from
      * @return bool
      */
-    public function delete(User $source, $target = null)
+    public function delete(User $source, string|User|null $target = null): bool
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);
@@ -89,7 +85,7 @@ trait HasAbilities
      * @param string $primaryRole primary role to change to
      * @return bool
      */
-    public function changePrimaryRole(User $source, $target, $primaryRole)
+    public function changePrimaryRole(User $source, string|User $target, string $primaryRole): bool
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);
@@ -104,7 +100,7 @@ trait HasAbilities
      * @param string|User|null $target primary role name or User to get primary role from
      * @return bool
      */
-    public function changePrimaryRoleFrom(User $source, $target = null)
+    public function changePrimaryRoleFrom(User $source, string|User|null $target = null): bool
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);
@@ -119,7 +115,7 @@ trait HasAbilities
      * @param string|User|null $target primary role name or User to get primary role from
      * @return bool
      */
-    public function changePrimaryRoleTo(User $source, $target = null)
+    public function changePrimaryRoleTo(User $source, string|User|null $target = null): bool
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);

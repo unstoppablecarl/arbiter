@@ -9,7 +9,7 @@ class UserPolicyWithTargetSelfOverrides
 {
     use HasTargetSelfOverrides;
 
-    public function setTargetSelfOverrides(TargetSelfOverridesContract $overrides)
+    public function setTargetSelfOverrides(TargetSelfOverridesContract $overrides): void
     {
         $this->targetSelfOverrides = $overrides;
     }

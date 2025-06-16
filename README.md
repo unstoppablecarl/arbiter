@@ -57,7 +57,7 @@ The developer implements the interface with a strategy for determining what the 
  - Using an existing multi-role based system:
    - Define some roles as "Primary". Each User has exactly one Primary Role.
    - Define a numeric priority to each Role. The Primary Role of a User is the Role with the highest priority assigned to them.
- - Users have exactly one Role which is used as the Primary Role. This is often a good starting point projects where it is unclear how complex the roles/permissions requirements will become. 
+ - Users have exactly one Role which is used as the Primary Role. This is often a good starting point for projects where it is unclear how complex the roles/permissions requirements will become. 
 
 ## Basic Usage
 

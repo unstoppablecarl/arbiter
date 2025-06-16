@@ -13,7 +13,7 @@ class TestCase extends BaseTestCase
         return __DIR__ . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
-    protected function wrapSingleArgumentProviderData(array $out)
+    static protected function wrapSingleArgumentProviderData(array $out): array
     {
         return array_map(function ($item) {
             return [$item];
@@ -25,8 +25,7 @@ class TestCase extends BaseTestCase
         $interfaces = [UserWithPrimaryRole::class, Authenticatable::class];
 
         $mock = $this
-            ->getMockBuilder($interfaces)
-            ->getMock();
+            ->createStubForIntersectionOfInterfaces($interfaces);
 
         $mock->method('getPrimaryRoleName')
              ->willReturn($primaryRole);

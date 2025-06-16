@@ -3,23 +3,16 @@
 
 namespace UnstoppableCarl\Arbiter\Policies\Concerns;
 
-use UnstoppableCarl\Arbiter\TargetSelfOverrides;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthUser;
+use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 
 trait HasTargetSelfOverrides
 {
-    /**
-     * @var TargetSelfOverrides
-     */
-    protected $targetSelfOverrides;
+    protected TargetSelfOverridesContract $targetSelfOverrides;
 
-    /**
-     * @param $user
-     * @param $ability
-     * @param $target
-     * @return mixed|null
-     */
-    public function before($user, $ability, $target)
+    public function before(Authenticatable $user, string $ability, AuthUser|string $target)
     {
-        return $this->targetSelfOverrides->callBefore(func_get_args());
+        return call_user_func_array([$this->targetSelfOverrides, 'shouldOverride'], func_get_args());
     }
 }

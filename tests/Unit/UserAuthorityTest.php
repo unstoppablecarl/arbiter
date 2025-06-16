@@ -2,19 +2,16 @@
 
 namespace UnstoppableCarl\Arbiter\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use UnstoppableCarl\Arbiter\Tests\TestCase;
 use UnstoppableCarl\Arbiter\UserAuthority;
 
-/**
- * Class UserAuthorityTest
- * @covers \UnstoppableCarl\Arbiter\UserAuthority::__construct()
- * @covers \UnstoppableCarl\Arbiter\UserAuthority::parseData()
- * * @covers \UnstoppableCarl\Arbiter\UserAuthority::set()
- */
+#[CoversClass(\UnstoppableCarl\Arbiter\UserAuthority::class)]
 class UserAuthorityTest extends TestCase
 {
 
-    public function falsyValueProvider()
+    static public function falsyValueProvider()
     {
         return [
             [null],
@@ -24,50 +21,41 @@ class UserAuthorityTest extends TestCase
         ];
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::getPrimaryRoles()
-     */
     public function testGetPrimaryRoles()
     {
         $data = [
-            'admin'   => [
+            'admin' => [
                 'ability' => ['manager', 'subscriber'],
             ],
             'manager' => [
                 'ability' => ['hacker'],
             ],
-            'hacker'  => [
+            'hacker' => [
                 'ability' => ['admin'],
             ],
         ];
 
         $userAuth = new UserAuthority($data);
         $expected = array_keys($data);
-        $actual   = $userAuth->getPrimaryRoles();
+        $actual = $userAuth->getPrimaryRoles();
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::getPrimaryRoles()
-     */
     public function testGetPrimaryRolesWhenFalsy()
     {
         $data = [
-            'admin'      => null,
-            'manager'    => false,
+            'admin' => null,
+            'manager' => false,
             'subscriber' => 0,
-            'hacker'     => [],
+            'hacker' => [],
         ];
 
         $userAuth = new UserAuthority($data);
         $expected = array_keys($data);
-        $actual   = $userAuth->getPrimaryRoles();
+        $actual = $userAuth->getPrimaryRoles();
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::can()
-     */
     public function testCan()
     {
         $data = [
@@ -99,9 +87,6 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->can('role_3', 'ability', 'not_set_role'));
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::can()
-     */
     public function testCanWithStringTarget()
     {
         $data = [
@@ -119,10 +104,7 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->can('role_1', 'ability_1', 'not_set_role'));
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::can()
-     * @dataProvider falsyValueProvider
-     */
+    #[DataProvider('falsyValueProvider')]
     public function testCanWithFalsyTargets($value)
     {
         $data = [
@@ -137,9 +119,6 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->can('role_1', 'ability_1', 'role_2'));
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::canAny()
-     */
     public function testCanAny()
     {
         $data = [
@@ -156,10 +135,7 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->canAny('role_1', 'not_set_ability'));
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canAny()
-     * @dataProvider falsyValueProvider
-     */
+    #[DataProvider('falsyValueProvider')]
     public function testCanAnyWithFalsyTargets($value)
     {
         $data = [
@@ -173,10 +149,7 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->canAny('role_1', 'ability_1'));
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canAny()
-     * @dataProvider falsyValueProvider
-     */
+    #[DataProvider('falsyValueProvider')]
     public function testCanAnyWithFalsyAbilities($value)
     {
         $data = [
@@ -187,9 +160,6 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->canAny('role_1', 'not_set_ability'));
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::canOrAny()
-     */
     public function testCanOrAnyWithValue()
     {
         $data = [
@@ -226,15 +196,15 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->canOrAny('not_set_role', 'ability'), $msg);
     }
 
-    public function canMethodConstantProvider()
+    static public function canMethodConstantProvider()
     {
         $data = [
-            'canCreate'                => UserAuthority::CAN_CREATE_USERS_WITH_PRIMARY_ROLE,
-            'canView'                  => UserAuthority::CAN_VIEW_USERS_WITH_PRIMARY_ROLE,
-            'canUpdate'                => UserAuthority::CAN_UPDATE_USERS_WITH_PRIMARY_ROLE,
-            'canDelete'                => UserAuthority::CAN_DELETE_USERS_WITH_PRIMARY_ROLE,
+            'canCreate' => UserAuthority::CAN_CREATE_USERS_WITH_PRIMARY_ROLE,
+            'canView' => UserAuthority::CAN_VIEW_USERS_WITH_PRIMARY_ROLE,
+            'canUpdate' => UserAuthority::CAN_UPDATE_USERS_WITH_PRIMARY_ROLE,
+            'canDelete' => UserAuthority::CAN_DELETE_USERS_WITH_PRIMARY_ROLE,
             'canChangePrimaryRoleFrom' => UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_WITH_PRIMARY_ROLE,
-            'canChangePrimaryRoleTo'   => UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO,
+            'canChangePrimaryRoleTo' => UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO,
         ];
 
         $out = [];
@@ -244,20 +214,10 @@ class UserAuthorityTest extends TestCase
         return $out;
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canCreate()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canView()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canUpdate()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canDelete()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canChangePrimaryRoleFrom()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::canChangePrimaryRoleTo()
-     * @dataProvider canMethodConstantProvider
-     * @param $method
-     * @param $key
-     */
+    #[DataProvider('canMethodConstantProvider')]
     public function testMappedMethods($method, $key)
     {
-        $data     = [
+        $data = [
             'role_1' => [
                 $key => ['role_2', 'role_3', 'not_set_role'],
             ],
@@ -290,15 +250,12 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(false, $userAuth->{$method}('role_3'), $msg);
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::canChangePrimaryRole()
-     */
     public function testCanChangePrimaryRole()
     {
-        $data     = [
+        $data = [
             'role_1' => [
                 UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_WITH_PRIMARY_ROLE => ['role_2'],
-                UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO                => ['role_3'],
+                UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO => ['role_3'],
             ],
         ];
         $userAuth = new UserAuthority($data);
@@ -311,9 +268,6 @@ class UserAuthorityTest extends TestCase
         $this->assertSame(true, $userAuth->canChangePrimaryRole('role_1', 'role_2', 'role_3'));
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::get()
-     */
     public function testGet()
     {
         $data = [
@@ -325,19 +279,16 @@ class UserAuthorityTest extends TestCase
         $userAuth = new UserAuthority($data);
 
         $expected = [];
-        $actual   = $userAuth->get('admin', 'non_valid');
-        $msg      = 'non set ability returns false';
+        $actual = $userAuth->get('admin', 'non_valid');
+        $msg = 'non set ability returns false';
         $this->assertEquals($expected, $actual, $msg);
 
         $expected = ['admin', 'manager'];
-        $msg      = 'valid ability returns target array';
-        $actual   = $userAuth->get('admin', 'ability_1');
+        $msg = 'valid ability returns target array';
+        $actual = $userAuth->get('admin', 'ability_1');
         $this->assertEquals($expected, $actual, $msg);
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::get()
-     */
     public function testGetWithStringTarget()
     {
         $data = [
@@ -349,13 +300,10 @@ class UserAuthorityTest extends TestCase
         $userAuth = new UserAuthority($data);
 
         $expected = ['subscriber'];
-        $actual   = $userAuth->get('admin', 'ability_1');
+        $actual = $userAuth->get('admin', 'ability_1');
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @covers \UnstoppableCarl\Arbiter\UserAuthority::get()
-     */
     public function testGetWhenFalsy()
     {
         $data = [
@@ -367,20 +315,19 @@ class UserAuthorityTest extends TestCase
         $userAuth = new UserAuthority($data);
 
         $expected = ['subscriber'];
-        $actual   = $userAuth->get('admin', 'ability_1');
+        $actual = $userAuth->get('admin', 'ability_1');
         $this->assertEquals($expected, $actual);
     }
 
-
-    public function getMethodConstantProvider()
+    static public function getMethodConstantProvider()
     {
         $data = [
-            'getViewablePrimaryRoles'       => UserAuthority::CAN_VIEW_USERS_WITH_PRIMARY_ROLE,
-            'getCreatablePrimaryRoles'      => UserAuthority::CAN_CREATE_USERS_WITH_PRIMARY_ROLE,
-            'getUpdatablePrimaryRoles'      => UserAuthority::CAN_UPDATE_USERS_WITH_PRIMARY_ROLE,
-            'getDeletablePrimaryRoles'      => UserAuthority::CAN_DELETE_USERS_WITH_PRIMARY_ROLE,
+            'getViewablePrimaryRoles' => UserAuthority::CAN_VIEW_USERS_WITH_PRIMARY_ROLE,
+            'getCreatablePrimaryRoles' => UserAuthority::CAN_CREATE_USERS_WITH_PRIMARY_ROLE,
+            'getUpdatablePrimaryRoles' => UserAuthority::CAN_UPDATE_USERS_WITH_PRIMARY_ROLE,
+            'getDeletablePrimaryRoles' => UserAuthority::CAN_DELETE_USERS_WITH_PRIMARY_ROLE,
             'getChangeableFromPrimaryRoles' => UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_WITH_PRIMARY_ROLE,
-            'getChangeableToPrimaryRoles'   => UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO,
+            'getChangeableToPrimaryRoles' => UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO,
         ];
 
         $out = [];
@@ -390,18 +337,10 @@ class UserAuthorityTest extends TestCase
         return $out;
     }
 
-    /**
-     * @dataProvider getMethodConstantProvider
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getViewablePrimaryRoles()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getCreatablePrimaryRoles()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getUpdatablePrimaryRoles()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getDeletablePrimaryRoles()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getChangeableFromPrimaryRoles()
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getChangeableToPrimaryRoles()
-     */
+    #[DataProvider('getMethodConstantProvider')]
     public function testGetViewablePrimaryRoles($method, $key)
     {
-        $data     = [
+        $data = [
             'role_1' => [
                 $key => ['role_2', 'role_3', 'not_set_role'],
             ],
@@ -413,19 +352,19 @@ class UserAuthorityTest extends TestCase
         $userAuth = new UserAuthority($data);
 
         $expected = $data['role_1'][$key];
-        $actual   = $userAuth->{$method}('role_1');
+        $actual = $userAuth->{$method}('role_1');
         $this->assertSame($expected, $actual);
 
         $expected = $data['role_2'][$key];
-        $actual   = $userAuth->{$method}('role_2');
+        $actual = $userAuth->{$method}('role_2');
         $this->assertSame($expected, $actual);
 
         $expected = [];
-        $actual   = $userAuth->{$method}('role_3');
+        $actual = $userAuth->{$method}('role_3');
         $this->assertSame($expected, $actual);
     }
 
-    public function getChangeableToPrimaryRolesWithTarget()
+    static public function getChangeableToPrimaryRolesWithTarget()
     {
         $out = [
             ['role_1'],
@@ -439,16 +378,13 @@ class UserAuthorityTest extends TestCase
         }, $out);
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getChangeableToPrimaryRoles()
-     * @dataProvider getChangeableToPrimaryRolesWithTarget()
-     */
+    #[DataProvider('getChangeableToPrimaryRolesWithTarget')]
     public function testGetChangeableToPrimaryRolesWithTarget($toRoles)
     {
         $data = [
             'source_role_1' => [
                 UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_WITH_PRIMARY_ROLE => 'from_role',
-                UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO                => $toRoles,
+                UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO => $toRoles,
             ],
         ];
 
@@ -457,19 +393,19 @@ class UserAuthorityTest extends TestCase
         $this->assertSame($expected, $userAuth->getChangeableToPrimaryRoles('source_role_1', 'from_role'));
     }
 
-    public function getChangeableToPrimaryRolesWhenCannotChangeFrom()
+    static public function getChangeableToPrimaryRolesWhenCannotChangeFrom()
     {
         $from = UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_WITH_PRIMARY_ROLE;
-        $to   = UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO;
+        $to = UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO;
 
         $out = [
             [
                 $from => ['role_2'],
-                $to   => ['role_3', 'role_4'],
+                $to => ['role_3', 'role_4'],
             ],
             [
                 $from => [],
-                $to   => ['role_3', 'role_4'],
+                $to => ['role_3', 'role_4'],
             ],
             [
                 $to => ['role_3', 'role_4'],
@@ -481,13 +417,10 @@ class UserAuthorityTest extends TestCase
         }, $out);
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getChangeableToPrimaryRoles()
-     * @dataProvider getChangeableToPrimaryRolesWhenCannotChangeFrom()
-     */
+    #[DataProvider('getChangeableToPrimaryRolesWhenCannotChangeFrom')]
     public function testGetChangeableToPrimaryRolesWhenCannotChangeFrom(array $abilities)
     {
-        $data     = [
+        $data = [
             'source_role_1' => $abilities,
 
         ];
@@ -500,19 +433,19 @@ class UserAuthorityTest extends TestCase
         $this->assertSame($expected, $userAuth->getChangeableToPrimaryRoles('source_role_1', 'role_4'));
     }
 
-    public function getChangeableToPrimaryRolesWhenCannotChangeTo()
+    static public function getChangeableToPrimaryRolesWhenCannotChangeTo(): array
     {
         $from = UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_WITH_PRIMARY_ROLE;
-        $to   = UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO;
+        $to = UserAuthority::CAN_CHANGE_PRIMARY_ROLE_OF_USERS_TO;
 
         $out = [
             [
                 $from => ['role_2'],
-                $to   => [],
+                $to => [],
             ],
             [
                 $from => [],
-                $to   => [],
+                $to => [],
             ],
             [
                 $from => ['role_2'],
@@ -524,13 +457,10 @@ class UserAuthorityTest extends TestCase
         }, $out);
     }
 
-    /**
-     * @covers       \UnstoppableCarl\Arbiter\UserAuthority::getChangeableToPrimaryRoles()
-     * @dataProvider getChangeableToPrimaryRolesWhenCannotChangeTo()
-     */
+    #[DataProvider('getChangeableToPrimaryRolesWhenCannotChangeTo')]
     public function testGetChangeableToPrimaryRolesWhenCannotChangeTo(array $abilities)
     {
-        $data     = [
+        $data = [
             'source_role_1' => $abilities,
 
         ];

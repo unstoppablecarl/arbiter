@@ -13,7 +13,7 @@ trait HandlesArbiterBindings
      * @param bool $shared
      * @param string $concreteClass Used for testing
      */
-    protected function registerUserAuthority($shared = false, $concreteClass = UserAuthority::class)
+    protected function registerUserAuthority(bool $shared = false, string $concreteClass = UserAuthority::class): void
     {
         $this->app->bind(UserAuthorityContract::class, function () use ($concreteClass) {
             return new $concreteClass(
@@ -22,19 +22,12 @@ trait HandlesArbiterBindings
         }, $shared);
     }
 
-    /**
-     * @return array
-     */
-    protected function userAuthorityPrimaryRoleAbilities()
+    protected function userAuthorityPrimaryRoleAbilities(): array
     {
         return [];
     }
 
-    /**
-     * @param bool $shared
-     * @param string $concreteClass Used for testing
-     */
-    protected function registerTargetSelfOverrides($shared = false, $concreteClass = TargetSelfOverrides::class)
+    protected function registerTargetSelfOverrides(bool $shared = false, string $concreteClass = TargetSelfOverrides::class): void
     {
         $this->app->bind(TargetSelfOverridesContract::class, function () use ($concreteClass) {
             return new $concreteClass(
@@ -43,10 +36,7 @@ trait HandlesArbiterBindings
         }, $shared);
     }
 
-    /**
-     * @return array
-     */
-    protected function targetSelfOverrides()
+    protected function targetSelfOverrides(): array
     {
         return [];
     }

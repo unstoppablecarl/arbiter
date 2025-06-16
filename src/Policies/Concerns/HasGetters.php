@@ -8,23 +8,16 @@ use UnstoppableCarl\Arbiter\Contracts\UserWithPrimaryRole as User;
 
 trait HasGetters
 {
-    /**
-     * @param mixed $value
-     * @return string
-     */
-    abstract protected function toPrimaryRole($value);
+    abstract protected function toPrimaryRole(User|string|null $value): ?string;
 
-    /**
-     * @return UserAuthorityContract
-     */
-    abstract protected function userAuthority();
+    abstract protected function userAuthority(): UserAuthorityContract;
 
     /**
      * Get primary roles that a user must have to be viewed by $source.
      * @param string|User $source primary role name or User to get primary role from
      * @return array
      */
-    public function getViewablePrimaryRoles($source)
+    public function getViewablePrimaryRoles(string|User $source): array
     {
         $source = $this->toPrimaryRole($source);
 
@@ -37,7 +30,7 @@ trait HasGetters
      * @param string|User $source primary role name or User to get primary role from
      * @return array
      */
-    public function getCreatablePrimaryRoles($source)
+    public function getCreatablePrimaryRoles(string|User $source): array
     {
         $source = $this->toPrimaryRole($source);
 
@@ -49,7 +42,7 @@ trait HasGetters
      * @param string|User $source primary role name or User to get primary role from
      * @return array
      */
-    public function getChangeableFromPrimaryRoles($source)
+    public function getChangeableFromPrimaryRoles(string|User $source): array
     {
         $source = $this->toPrimaryRole($source);
 
@@ -64,7 +57,7 @@ trait HasGetters
      * @param string|User|null $target primary role name or User to get primary role from
      * @return array
      */
-    public function getChangeableToPrimaryRoles($source, $target = null)
+    public function getChangeableToPrimaryRoles(string|User $source, string|User|null $target = null): array
     {
         $source = $this->toPrimaryRole($source);
         $target = $this->toPrimaryRole($target);
@@ -77,7 +70,7 @@ trait HasGetters
      * @param string|User $source primary role name or User to get primary role from
      * @return array
      */
-    public function getDeletablePrimaryRoles($source)
+    public function getDeletablePrimaryRoles(string|User $source): array
     {
         $source = $this->toPrimaryRole($source);
 
@@ -88,7 +81,7 @@ trait HasGetters
      * Get primary roles
      * @return array
      */
-    public function getPrimaryRoles()
+    public function getPrimaryRoles(): array
     {
         return $this->userAuthority()->getPrimaryRoles();
     }

@@ -8,47 +8,31 @@ use UnstoppableCarl\Arbiter\Contracts\TargetSelfOverridesContract;
 class TargetSelfOverrides implements TargetSelfOverridesContract
 {
     /**
-     * Overrides the returned value of an ability when $target is the currently logged in user.
+     * Overrides the returned value of an ability when $target is the currently logged-in user.
      * Used to close security holes where users may be able to promote/delete themselves.
      * Ignored when value is null.
      *
-     * @var array
-     * @example [ 'my_ability' => true, 'my_other_ability' => false, 'fallback_ability' => null]
      * @return array
      *
-     * @codeCoverageIgnore
+     * @example [ 'my_ability' => true, 'my_other_ability' => false, 'fallback_ability' => null]
+     * @var array
      */
-    protected $overrides = [];
+    protected array $overrides = [];
 
-    /**
-     * TargetSelfAbilityOverrides constructor.
-     * @param array $overrides
-     */
     public function __construct(array $overrides)
     {
         $this->overrides = $overrides;
     }
 
     /**
-     * Call $this->before using array of arguments
-     * Simplifies calling with func_get_args()
-     * @param array $arguments
-     * @return bool|null
-     */
-    public function callBefore(array $arguments)
-    {
-        return call_user_func_array([$this, 'before'], $arguments);
-    }
-
-    /**
      * Override return values before resolving an ability.
-     * @see Gate::callPolicyBefore
      * @param AuthUser $user
      * @param string $ability
      * @param AuthUser|string $target
      * @return bool|null
+     * @see Gate::callPolicyBefore
      */
-    public function before(AuthUser $user, $ability, $target)
+    public function shouldOverride(AuthUser $user, string $ability, AuthUser|string $target): ?bool
     {
         if (!$this->isSelf($user, $target)) {
             return null;
@@ -69,7 +53,7 @@ class TargetSelfOverrides implements TargetSelfOverridesContract
      * @param mixed $target
      * @return bool
      */
-    protected function isSelf(AuthUser $source, $target)
+    protected function isSelf(AuthUser $source, AuthUser|string $target): bool
     {
         if (!$target instanceof AuthUser) {
             return false;
